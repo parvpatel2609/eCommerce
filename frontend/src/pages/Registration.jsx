@@ -8,25 +8,29 @@ function Registration() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    
+
     //navigation hook
     const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        
+
         try {
-            const res = await axios.post(`${import.meta.env.VITE_REACT_API_APP_PORT}/api/v1/auth/register`, { name, email, password });
-            // console.log(res);
-            if (res.data.success) {
-                toast.success(res.data.message);
-                navigate("/");
+            if (password.length < 6) {
+                toast.error("Password and confirm password must be greater than 6");
             }
             else {
-                toast.error(res.data.message);
-                navigate("/register");
+                const res = await axios.post(`${import.meta.env.VITE_REACT_API_APP_PORT}/api/v1/auth/register`, { name, email, password });
+                // console.log(res);
+                if (res.data.success) {
+                    toast.success(res.data.message);
+                    navigate("/");
+                }
+                else {
+                    toast.error(res.data.message);
+                    navigate("/register");
+                }
             }
-
         }
         catch (error) {
             console.log(error);

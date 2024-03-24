@@ -1,22 +1,34 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import CryptoJS from 'crypto-js';
 import { toast } from 'react-hot-toast';
 
 const OTP = () => {
 
   const [otp, setOtp] = useState("");
-
   const navigate = useNavigate();
 
   //handleOtp method
   const handleOtp = async (e) => {
     e.preventDefault();
     try {
-
+      const decrypt = CryptoJS.AES.decrypt(localStorage.getItem('reset'), import.meta.env.VITE_LOCLSTORAGE_SECRET).toString(CryptoJS.enc.Utf8);
+      const obj = JSON.parse(decrypt);
+      // console.log('obj', obj);
+      const email = obj.email;
+      // console.log(email);
+      const res = await axios.post(`${import.meta.env.VITE_REACT_API_APP_PORT}/api/v1/auth/compareOTP`, { email, otp });
+      if (res.data.success == true) {
+        toast.success(res.data.message);
+        navigate("/reset_password");
+      }
+      else {
+        toast.error(res.data.message);
+      }
     }
     catch (error) {
-
+      console.log('Error:', error);
     }
   }
 

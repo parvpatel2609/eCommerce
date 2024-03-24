@@ -8,7 +8,6 @@ const HomePage = () => {
     return (
         <Layout title={"Homepage - Amazon"}>
             <h1>Home Page</h1>
-
             <pre>{JSON.stringify(auth,null,4)}</pre>
         </Layout>
     )

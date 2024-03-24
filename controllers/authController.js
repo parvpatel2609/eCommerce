@@ -195,9 +195,9 @@ export const loginController = async (req, res) => {
 
 //forgotPassword Controller
 let randNumber;
+const map = new Map();
 export const forgotPasswordController = async (req, res) => {
     try {
-
         if (!req.body.email) {
             res.status(400).send({ message: "Register email id is required" });
         }
@@ -206,13 +206,14 @@ export const forgotPasswordController = async (req, res) => {
         const user = await userModel.findOne({ email: req.body.email });
         const admin = await adminModel.findOne({ email: req.body.email });
 
-        if (!user) {
+        if (!user && !admin) {
             return res.status(404).send({
                 success: false,
-                message: "User not found"
+                message: "User or Admin not found"
             });
         }
-        else {
+        else if(user) {
+            // console.log(req.body.email);
             const startTime = Date.now();
             randNumber = generateRandomNumber();
             console.log("Random Number: " + randNumber);
@@ -252,22 +253,14 @@ export const forgotPasswordController = async (req, res) => {
                     message: "OTP is expired. Please try again after sometime."
                 });
             }
-
             const email = req.body.email;
-
+            map.set(req.body.email, randNumber);
             return res.status(200).send({
                 success: true,
-                message: "OTP send successfully in your college student account",
+                message: "OTP send successfully in your entered account id",
                 email
             });
         }
-
-        if (!admin) {
-            return res.status(404).send({
-                success: false,
-                message: "Admin not found"
-            });
-        }
         else {
             const startTime = Date.now();
             randNumber = generateRandomNumber();
@@ -308,12 +301,11 @@ export const forgotPasswordController = async (req, res) => {
                     message: "OTP is expired. Please try again after sometime."
                 });
             }
-
             const email = req.body.email;
-
+            map.set(req.body.email, randNumber);
             return res.status(200).send({
                 success: true,
-                message: "OTP send successfully in your college student account",
+                message: "OTP send successfully in your entered account id",
                 email
             });
         }
@@ -325,5 +317,43 @@ export const forgotPasswordController = async (req, res) => {
             message: "Error in forgot password page",
             error
         });
+    }
+}
+
+export const otpController = (req, res) => {
+    try {
+        // console.log(map);
+        // console.log(req.body);
+        console.log("Receive mail: ",req.body.email ," Here received OTP: ",req.body.otp);
+        if(map.has(req.body.email)){
+            if(map.get(req.body.email)==req.body.otp){
+                map.delete(req.body.email);
+                res.status(200).send({
+                    success: true,
+                    message: "OTP is perfect",
+                    randNumber
+                });
+            }
+            else {
+                res.status(206).send({
+                    success: false,
+                    message: "OTP is wrong"
+                });
+            }
+        }
+        else{
+            console.log(error);
+            res.status(401).send({
+                success: false,
+                message: "Password of this account request not found.",
+            });  
+        }
+    } 
+    catch (error) {
+        console.log(error);
+        res.status(405).send({
+            success: false,
+            message: "Something went wrong in otp checking"
+        });   
     }
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import {adminregisterController, forgotPasswordController, loginController, registerController} from "../controllers/authController.js"
+import {adminregisterController, forgotPasswordController, loginController, otpController, registerController} from "../controllers/authController.js"
 import { isAdmin, requireSignin } from './../middlewares/authMiddleware.js';
 
 //router object
@@ -18,6 +18,9 @@ router.post("/login", loginController);
 
 //forgot-password || Post Method
 router.post("/forgot-password", forgotPasswordController);
+
+//compare OTP route
+router.post("/compareOTP", otpController);
 
 
 //Protectec route auth
