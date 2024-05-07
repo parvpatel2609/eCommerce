@@ -21,10 +21,8 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:[true,"Please provide a password"]
     },
-    profile_photo:{
-        data: Buffer,
-        type: String,
-        image: String
+    photo:{
+        type: String
     }
 });
 

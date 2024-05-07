@@ -20,13 +20,13 @@ const Spinner = ({path ="/"}) => {
 
     return (
         <>
-            <div class="flex flex-column items-center justify-center h-screen">
+            <div className="flex flex-column items-center justify-center h-screen">
                 <h1 className='Text-center'>Redirecting to login page in {count} second</h1>
                 <br />
                 <br />
-                <div class="relative">
-                    <div class="h-24 w-24 rounded-full border-t-8 border-b-8 border-gray-200"></div>
-                    <div class="absolute top-0 left-0 h-24 w-24 rounded-full border-t-8 border-b-8 border-blue-500 animate-spin">
+                <div className="relative">
+                    <div className="h-24 w-24 rounded-full border-t-8 border-b-8 border-gray-200"></div>
+                    <div className="absolute top-0 left-0 h-24 w-24 rounded-full border-t-8 border-b-8 border-blue-500 animate-spin">
                     </div>
                 </div>
             </div>

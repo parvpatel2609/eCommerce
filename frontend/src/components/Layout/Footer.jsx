@@ -1,20 +1,21 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom';
 
 const Footer = () => {
   return (
     <div>
-      <div class="container">
-        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-          <p class="col-md-4 mb-0 text-muted">© 2023 Amazon Company, Inc</p>
+      <div className="container">
+        <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+          <p className="col-md-4 mb-0 text-muted">© 2023 Amazon Company, Inc</p>
 
-          <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-             <svg class="bi me-2" width="40" height="32"></svg>
-          </a>
+          <NavLink to="/" className="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+             <svg className="bi me-2" width="40" height="32"></svg>
+          </NavLink>
 
-          <ul class="nav col-md-4 justify-content-end">
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Contact</a></li>
-            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
+          <ul className="nav col-md-4 justify-content-end">
+            <li className="nav-item"><NavLink to="/" class="nav-link px-2 text-muted">Home</NavLink></li>
+            <li className="nav-item"><NavLink to="/" class="nav-link px-2 text-muted">Contact</NavLink></li>
+            <li className="nav-item"><NavLink to="/" class="nav-link px-2 text-muted">About</NavLink></li>
           </ul>
         </footer>
       </div>

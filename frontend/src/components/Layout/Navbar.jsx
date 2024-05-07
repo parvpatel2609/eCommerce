@@ -2,16 +2,15 @@ import { useAuth } from '../../context/auth';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Fragment, useState } from 'react'
-import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
-import { ArrowPathIcon, Bars3Icon, ChartPieIcon, CursorArrowRaysIcon, FingerPrintIcon, SquaresPlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
-
+import { useEffect, useState } from 'react'
+import { Dialog,Popover } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function Navbar() {
 
   const [auth, setAuth] = useAuth();
   const navigate = useNavigate();
+
   //handleLogout arrow function
   const handleLogOut = () => {
     try {
@@ -30,13 +29,17 @@ export default function Navbar() {
     }
   }
 
+  // useEffect(() => {
+  //   console.log(auth);
+  // }, []);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <header className="bg-white">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
-          <NavLink href="#" className="-m-1.5 p-1.5">
+          <NavLink to={"/"} className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
             <img className="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Company Logo" />
           </NavLink>
@@ -52,27 +55,47 @@ export default function Navbar() {
           </button>
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
-          <NavLink to="#" className="text-sm font-semibold leading-6 text-gray-900"> Home </NavLink>
-          <NavLink to="#" className="text-sm font-semibold leading-6 text-gray-900"> Category </NavLink>
-          <NavLink to="#" className="text-sm font-semibold leading-6 text-gray-900"> Cart </NavLink>
+          <NavLink to="#" className="font-bold leading-6 text-gray-900"> Home </NavLink>
+          <NavLink to="#" className="font-bold leading-6 text-gray-900"> Category </NavLink>
+          <NavLink to="#" className="font-bold leading-6 text-gray-900"> Cart </NavLink>
         </Popover.Group>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {
-            !auth.user ? (
+            !auth?.user ? (
               <>
-                <NavLink to="/register" className="text-sm font-semibold leading-6 text-gray-900">
+                <NavLink to="/register" className="font-bold leading-6 text-gray-900">
                   Register<span aria-hidden="true">&rarr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 </NavLink>
-                <NavLink to="/login" className="text-sm font-semibold leading-6 text-gray-900">
+                <NavLink to="/login" className="font-bold leading-6 text-gray-900">
                   Log in<span aria-hidden="true">&rarr;</span>
                 </NavLink>
               </>
             ) : (
               <>
-                <h1>Hello &nbsp;&nbsp;&nbsp;</h1>
-                <NavLink onClick={handleLogOut} className="text-sm font-semibold leading-6 text-gray-900">
-                  LogOut<span aria-hidden="true">&rarr;</span>
-                </NavLink>
+                <div className="dropdown">
+                  <NavLink className="nav-link  d-flex align-items-center" to="" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src={auth.user.photo} alt="Profile Photo"
+                      style={{ height: '2.5rem', width: '2.5rem', objectFit: 'cover' }}
+                      className="profile-circle" />
+                  </NavLink>
+
+                  <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <li><a className="dropdown-item" href="#">My Profile</a></li>
+                    <li><a className="dropdown-item" href="#">Settings</a></li>
+                    <li><a className="dropdown-item" href="#">Logout</a></li>
+                  </ul>
+                </div>
+
+                {/*
+                  <h1 className="text-sm font-semibold leading-6 text-gray-900">
+                    {auth.user.name} &nbsp;&nbsp;&nbsp;
+                  </h1> 
+                */}
+                <div className='mx-3'>
+                  <NavLink onClick={handleLogOut} className="font-bold leading-6 text-gray-900">
+                    LogOut
+                  </NavLink>
+                </div>
               </>
             )
           }

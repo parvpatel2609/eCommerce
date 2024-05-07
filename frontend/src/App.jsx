@@ -16,6 +16,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import Users from './pages/Admin/Users';
 import Orders from './pages/user/Orders';
 import Profile from './pages/user/Profile';
+import Reset_Password from './pages/Reset_Password';
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
         </Route>
         <Route path='/forgot-password' element={<ForgotPassword />} />
         <Route path='/otp' element={<OTP />} />
+        <Route path='/reset_password' element={<Reset_Password />} />
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<Contact />} />
         <Route path='/*' element={<PageNotFound />} />

@@ -8,6 +8,7 @@ function Registration() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [file, setFile] = useState("");
 
     //navigation hook
     const navigate = useNavigate();
@@ -16,11 +17,25 @@ function Registration() {
         e.preventDefault();
 
         try {
+            console.log(file);
+
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("email", email);
+            formData.append("password", password);
+            formData.append("photo", file);
+
+            const config = {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            }
+
             if (password.length < 6) {
                 toast.error("Password and confirm password must be greater than 6");
             }
             else {
-                const res = await axios.post(`${import.meta.env.VITE_REACT_API_APP_PORT}/api/v1/auth/register`, { name, email, password });
+                const res = await axios.post(`${import.meta.env.VITE_REACT_API_APP_PORT}/api/v1/auth/register`, formData, config);
                 // console.log(res);
                 if (res.data.success) {
                     toast.success(res.data.message);
@@ -91,6 +106,19 @@ function Registration() {
                                 <input id="password" name="password" type="password"
                                     value={password} required
                                     onChange={(e) => { setPassword(e.target.value) }}
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label htmlFor="photo" className="block text-sm font-medium leading-6 text-gray-900">
+                                Profile Photo
+                            </label>
+                            <div className="mt-2">
+                                <input id="photo" name="photo" type="file" autoComplete="photo"
+                                    required
+                                    onChange={(e) => { setFile(e.target.files[0]) }}
                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>

@@ -3,11 +3,13 @@ import userModel from "../models/userModel.js";
 import adminModel from "../models/adminModel.js";
 import JWT from "jsonwebtoken";
 import { transporter } from "./mailSender.js";
-import {generateRandomNumber , isExpired} from "./randomNumberGenerate.js";
+import { generateRandomNumber, isExpired } from "./randomNumberGenerate.js";
+import { uploadOnCloudinary } from "../helpers/cloudinary.js";
 
 
 export const registerController = async (req, res) => {
     try {
+        // console.log("File: ", req.file);
         //validation
         if (!req.body.name) {
             return res.send({ error: "Name is Required" });
@@ -17,6 +19,9 @@ export const registerController = async (req, res) => {
         }
         if (!req.body.password) {
             return res.send({ error: "password is Required" });
+        }
+        if (!req.file) {
+            return res.send({ error: "No File is uploaded" });
         }
 
         //check user is exist or not 
@@ -32,13 +37,18 @@ export const registerController = async (req, res) => {
         //hashedPassword before store in database the user
         const hashPassword = await hashedPassword(req.body.password);
 
+        // console.log("File Path to start uploading in serevr: ", req.file.path);
+        const upload = await uploadOnCloudinary(req.file.path);
+        // console.log("After uploading photo to cloud url of it is : ", upload?.secure_url);
+
         //save the user in database
         const user = new userModel({
             name: req.body.name,
             email: req.body.email,
             password: hashPassword,
             address: req.body.address,
-            phone: req.body.phone
+            phone: req.body.phone, 
+            photo: upload?.secure_url
         });
         user.save();
 
@@ -138,6 +148,8 @@ export const loginController = async (req, res) => {
             //assign token
             const token = JWT.sign({ _id: check_user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
+            // console.log(check_user);
+
             //after assign token than send response to frontend
             res.status(200).send({
                 success: true,
@@ -145,7 +157,8 @@ export const loginController = async (req, res) => {
                 check_user: {
                     role: check_user.role,
                     name: check_user.name,
-                    email: check_user.email
+                    email: check_user.email,
+                    photo: check_user.photo
                 },
                 token
             });
@@ -212,7 +225,7 @@ export const forgotPasswordController = async (req, res) => {
                 message: "User or Admin not found"
             });
         }
-        else if(user) {
+        else if (user) {
             // console.log(req.body.email);
             const startTime = Date.now();
             randNumber = generateRandomNumber();
@@ -320,13 +333,13 @@ export const forgotPasswordController = async (req, res) => {
     }
 }
 
-export const otpController = (req, res) => {
+export const otpController = async (req, res) => {
     try {
         // console.log(map);
         // console.log(req.body);
-        console.log("Receive mail: ",req.body.email ," Here received OTP: ",req.body.otp);
-        if(map.has(req.body.email)){
-            if(map.get(req.body.email)==req.body.otp){
+        console.log("Receive mail: ", req.body.email, " Here received OTP: ", req.body.otp);
+        if (map.has(req.body.email)) {
+            if (map.get(req.body.email) == req.body.otp) {
                 map.delete(req.body.email);
                 res.status(200).send({
                     success: true,
@@ -341,19 +354,70 @@ export const otpController = (req, res) => {
                 });
             }
         }
-        else{
+        else {
             console.log(error);
             res.status(401).send({
                 success: false,
                 message: "Password of this account request not found.",
-            });  
+            });
         }
-    } 
+    }
     catch (error) {
         console.log(error);
         res.status(405).send({
             success: false,
             message: "Something went wrong in otp checking"
-        });   
+        });
     }
 }
+
+export const updatePasswordController = async (req, res) => {
+    try {
+        if (!req.body.email) {
+            res.status(400).send({ message: "Register email id is required" });
+        }
+        if (!req.body.password) {
+            res.status(400).send({ message: "Password field is required to update the password" });
+        }
+
+        //check user & admin
+        const user = await userModel.findOne({ email: req.body.email });
+        const admin = await adminModel.findOne({ email: req.body.email });
+
+        if (!user && !admin) {
+            return res.status(404).send({
+                success: false,
+                message: "User or Admin not found"
+            });
+        }
+
+        //updaring user password
+        else if (user) {
+            const hashPassword = await hashedPassword(req.body.password);
+            await userModel.updateOne({ email: req.body.email }, { password: hashPassword });
+
+            res.status(200).send({
+                success: true,
+                message: "Password reseted successfully in User account"
+            });
+        }
+
+        //updating admin password
+        else {
+            const hashPassword = await hashedPassword(req.body.password);
+            await adminModel.updateOne({ email: req.body.email }, { password: hashPassword });
+
+            res.status(200).send({
+                success: true,
+                message: "Password reseted successfully in User account"
+            });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        res.status(405).send({
+            success: false,
+            message: "Something went wrong in updating password"
+        });
+    }
+} 
