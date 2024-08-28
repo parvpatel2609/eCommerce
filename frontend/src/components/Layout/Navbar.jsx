@@ -74,7 +74,7 @@ export default function Navbar() {
               <>
                 <div className="dropdown">
                   <NavLink className="nav-link  d-flex align-items-center" to="" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src={auth.user.photo} alt="Profile Photo"
+                    <img src={auth?.user?.photo} alt="Profile Photo"
                       style={{ height: '2.5rem', width: '2.5rem', objectFit: 'cover' }}
                       className="profile-circle" />
                   </NavLink>

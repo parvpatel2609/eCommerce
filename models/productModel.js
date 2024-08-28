@@ -32,7 +32,8 @@ const productSchema =  new mongoose.Schema({
         type: String
     },
     shipping: {
-        type: String
+        type: String,
+        enum: ['not shipped', 'shipped', 'delivered']
     }
 }, {timestamps: true}); //adds created time of product
 

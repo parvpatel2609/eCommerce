@@ -1,6 +1,6 @@
 import express from "express";
 import { isAdmin, requireSignin } from "../middlewares/authMiddleware.js";
-import { createProductController, deleteProductController, getProductsController, getSingleProductController, updateProductController, updateProductWithImageController } from "../controllers/productController.js";
+import { createProductController, deleteProductController, getProductsController, getSingleProductController, productFilterController, updateProductController, updateProductWithImageController } from "../controllers/productController.js";
 import { upload } from "../middlewares/multer_middleware.js";
 
 const router = express.Router();
@@ -12,6 +12,7 @@ router.post("/create-product", requireSignin, isAdmin, upload.single("image"), a
         next();
     }
     else {
+        console.log("we are here inside product create routes")
         res.status(400).send('No file uploaded.');
     }
 }, createProductController);
@@ -26,7 +27,7 @@ router.get("/get-products/:slug", getSingleProductController);
 router.delete("/delete-product/:pid", requireSignin, isAdmin, deleteProductController);
 
 //update product with image || Admin method
-router.put("/update-product-with-image/:pid", requireSignin, isAdmin, upload.single("image"), async (req, res, next) => {
+router.put("/update-product-with-image/:pid", requireSignin, isAdmin, upload.single("photo"), async (req, res, next) => {
     if (req.file) {
         next();
     }
@@ -37,5 +38,8 @@ router.put("/update-product-with-image/:pid", requireSignin, isAdmin, upload.sin
 
 //update product without changing the image || Admin Method
 router.put("/update-product/:pid", requireSignin, isAdmin, updateProductController);
+
+//filter-product
+router.post("/product-filter", productFilterController);
 
 export default router;

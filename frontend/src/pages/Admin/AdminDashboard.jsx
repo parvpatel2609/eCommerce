@@ -6,7 +6,7 @@ import { useAuth } from '../../context/auth'
 
 const AdminDashboard = () => {
   const [auth] = useAuth();
-  // console.log(auth);
+  console.log(auth);
 
   return (
     <>
